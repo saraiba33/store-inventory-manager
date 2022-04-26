@@ -1,0 +1,18 @@
+table,
+tr,
+td,
+th {
+    border: solid black 2px;
+    padding: 10px;
+}
+
+table {
+    margin: 25px;
+}
+
+form,
+label,
+input {
+    display: block;
+    margin: 10px;
+}
