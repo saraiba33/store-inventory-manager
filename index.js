@@ -1,7 +1,28 @@
 const form = document.querySelector("form")
 const table = document.querySelector("table")
 
-function getInput(inputs) {
+
+
+
+const encodedItems = localStorage.getItem("allItemsAdded");
+if (encodedItems) {
+    const parsedItems = JSON.parse(encodedItems)
+    const { allItemsAdded } = parsedItems
+    allItemsAdded.map((items) => {
+        const createTr = document.createElement("tr")
+        createTr.classList.add("added-rows")
+        createTr.innerHTML = `
+        <td>${items.item}</td>
+        <td>${items.sellIn}</td>
+        <td>${items.quality}</td>
+        <td>${items.date}</td>
+        `
+        table.append(createTr)
+    })
+}
+
+
+function getInput() {
     form.addEventListener("submit", event => {
         event.preventDefault()
         const formData = new FormData(event.target)
@@ -9,33 +30,20 @@ function getInput(inputs) {
         const sellIn = formData.get("sell-in")
         const quality = formData.get("quality")
         const date = formData.get("date")
+        const newItemInfoAdded = {
+            item: itemName,
+            sellIn: sellIn,
+            quality: quality,
+            date: date
+        }
 
+        const encodedItems = localStorage.getItem("allItemsAdded");
+        const allItemsAdded = encodedItems ? JSON.parse(encodedItems).allItemsAdded : []
+        allItemsAdded.push(newItemInfoAdded)
+        const itemsJSON = JSON.stringify({ allItemsAdded })
+        localStorage.setItem("allItemsAdded", itemsJSON)
 
-        localStorage.setItem("item-name", itemName)
-        localStorage.setItem("sell-in", sellIn)
-        localStorage.setItem("quality", quality)
-        localStorage.setItem("date", date)
     })
 
 }
-
-function addInputsToList(item, sell, quality, date) {
-    const tr = document.createElement("tr")
-    const createTr = `
-    <td>${item}</td>
-    <td>${sell}</td>
-    <td>${quality}</td>
-    <td>${date}</td>
-    
-    `
-
-    tr.innerHTML = createTr
-    table.append(tr)
-}
-
-function getItem(listItems) {
-    const itemName = localStorage.getItem("item-name")
-    addInputsToList(itemName)
-
-    console.log(itemName)
-}
+getInput()
