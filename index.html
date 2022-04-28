@@ -19,13 +19,13 @@
         <input type="text" name="item-name" id="item-name" placeholder="enter item name" required>
 
         <label for="sell-in"></label>
-        <input type="number" name="sell-in" id="sell-in" required>
+        <input type="number" name="sell-in" id="sell-in" placeholder="enter # of days to sell" required>
 
         <label for="quality"></label>
-        <input type="number" name="quality" id="quality" required>
+        <input type="number" name="quality" id="quality" placeholder="enter quality" required>
 
-        <label for="date"></label>
-        <input type="date" name="date" id="date" required>
+        <!-- <label for="date"></label>
+        <input type="date" name="date" id="date" required> -->
 
         <input type="submit" value="Add to Inventory">
 
@@ -35,10 +35,12 @@
             <th>Item</th>
             <th>Sell In</th>
             <th>Quailty</th>
-            <th>Date added</th>
         </tr>
     </table>
+    <button class="previous-day">Previous Day</button>
+    <button class="next-day">Next Day</button>
     <button class="clear-button">Clear All Inventory</button>
+
 </body>
 
 </html>

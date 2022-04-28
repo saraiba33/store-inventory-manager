@@ -1,3 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand&display=swap');
+body {
+    font-family: 'Quicksand', sans-serif;
+    /* background-image: url(Rose.jpg);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover; */
+}
+
 table,
 tr,
 td,
@@ -8,6 +17,12 @@ th {
 
 table {
     margin: 25px;
+    background-color: hsla(0, 3%, 73%, 0.5);
+}
+
+th {
+    background-color: black;
+    color: white;
 }
 
 form,
@@ -15,4 +30,26 @@ label,
 input {
     display: block;
     margin: 10px;
+}
+
+header {
+    background-color: black;
+    color: white;
+    text-align: center;
+    padding: 40px;
+    font-size: 50px;
+    font-family: 'Quicksand', sans-serif;
+    text-transform: uppercase;
+}
+
+button {
+    font-family: 'Quicksand', sans-serif;
+}
+
+.previous-day {
+    margin-left: 40px;
+}
+
+.next-day {
+    margin-left: 20px;
 }
