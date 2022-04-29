@@ -4,6 +4,7 @@ const clear = document.querySelector(".clear-button")
 const nextDayButton = document.querySelector(".next-day")
 const previousDayButton = document.querySelector(".previous-day")
 const placeholder = document.querySelector(".placeholder")
+const error = document.querySelector(".error")
 
 
 function getInput() {
@@ -11,67 +12,51 @@ function getInput() {
         event.preventDefault()
         location.reload();
         const formData = new FormData(event.target)
-        const itemName = formData.get("item-name")
-        const sellIn = formData.get("sell-in")
-        const quality = formData.get("quality")
-        const date = formData.get("date")
+        const item = formData.get("item-name")
+        const sellIn = +formData.get("sell-in")
+        const quality = +formData.get("quality")
+        const category = getCategory(formData.get("item-name"))
         const newItemInfoAdded = {
-            item: itemName,
-            sellIn: sellIn,
-            quality: quality,
-            date: date
+            item,
+            sellIn,
+            quality,
+            category,
         }
-        const encodedItems = localStorage.getItem("allItemsAdded");
-        const allItemsAdded = encodedItems ? JSON.parse(encodedItems).allItemsAdded : []
-        allItemsAdded.push(newItemInfoAdded)
-        const itemsJSON = JSON.stringify({ allItemsAdded })
-        localStorage.setItem("allItemsAdded", itemsJSON)
+        const encodedItem = localStorage.getItem("itemAdded");
+        const itemAdded = encodedItem ? JSON.parse(encodedItem).itemAdded : []
+        itemAdded.push(newItemInfoAdded)
+        const itemJSON = JSON.stringify({ itemAdded })
+        localStorage.setItem("itemAdded", itemJSON)
     })
 
 }
 getInput()
 
-const encodedItems = localStorage.getItem("allItemsAdded");
-if (encodedItems) {
-    const parsedItems = JSON.parse(encodedItems)
-    const { allItemsAdded } = parsedItems
-    allItemsAdded.map((items) => {
+const encodedItem = localStorage.getItem("itemAdded");
+if (encodedItem) {
+    const parsedItem = JSON.parse(encodedItem)
+    const { itemAdded } = parsedItem
+    itemAdded.map((input) => {
         const createTr = document.createElement("tr")
         createTr.classList.add("added-rows")
-        if (items.item.toLowerCase().includes("Sulfuras")) {
+        if (input.item.includes("Sulfuras") || input.item.includes("sulfuras")) {
             createTr.innerHTML = `
-            <td>${items.item}</td>
+            <td>${input.item}</td>
             <td class="sell-in-days">N/A</td>
             <td class="item-quality">80</td>
             `
             table.append(createTr)
             placeholder.remove()
             return errorMessage("")
-        } else if (items.item.includes("sulfuras")) {
-            createTr.innerHTML = `
-            <td>${items.item}</td>
-            <td class="sell-in-days">N/A</td>
-            <td class="item-quality">80</td>
-            `
-            table.append(createTr)
-            placeholder.remove()
-            return errorMessage("")
-        } else if (items.item.includes("/")) {
+        } else if (input.item.includes("/")) {
             return errorMessage("** You can not add more than one item at a time **")
-        } else if (items.quality > 50) {
-            createTr.innerHTML = `
-            <td>${items.item}</td>
-            <td class="sell-in-days"> Sell in ${items.sellIn} days</td>
-            <td class="item-quality">50</td>
-            `
-            table.append(createTr)
-            placeholder.remove()
-            return errorMessage("** Quality max is 50 **")
+        } else if (input.quality > 50 && input.sellIn < 0 || input.quality > 50 || input.sellIn < 0) {
+            return errorMessage("** Quality max is 50 and Sell in minimum is 0 **")
         } else {
             createTr.innerHTML = `
-            <td>${items.item}</td>
-            <td class="sell-in-days">Sell in ${items.sellIn} days</td>
-            <td class="item-quality">${items.quality}</td>
+            <td>${input.item}</td>
+            <td class="sell-in-days">Sell in ${input.sellIn} days</td>
+            <td class="item-quality">${input.quality}</td>
             `
             table.append(createTr)
             placeholder.remove()
@@ -80,16 +65,18 @@ if (encodedItems) {
     })
 }
 
-
-nextDayButton.addEventListener("click", () => {
-
-})
-
-function changeSellInAndQuality() {
-
+function getCategory(itemName) {
+    if (itemName.includes("Aged Brie") || itemName.includes("aged brie")) {
+        return "aged"
+    } else if (itemName.includes("Sulfuras") || itemName.includes("sulfuras")) {
+        return "sulfuras"
+    } else if (itemName.includes("Conjured") || itemName.includes("conjured")) {
+        return "conjured"
+    } else if (itemName.includes("Backstage Passes") || itemName.includes("backstage passes")) {
+        return "backstage"
+    } else
+        return "none"
 }
-
-
 
 clear.addEventListener("click", () => {
     localStorage.clear()
@@ -97,7 +84,6 @@ clear.addEventListener("click", () => {
 })
 
 function errorMessage(message) {
-    const error = document.querySelector(".error")
     error.style.color = "red"
     error.textContent = message
 }
