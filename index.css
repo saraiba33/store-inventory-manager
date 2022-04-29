@@ -18,6 +18,7 @@ th {
 table {
     margin: 25px;
     background-color: hsla(0, 3%, 73%, 0.5);
+    width: 75%
 }
 
 th {
@@ -51,5 +52,9 @@ button {
 }
 
 .next-day {
+    margin-left: 20px;
+}
+
+.clear-button {
     margin-left: 20px;
 }
