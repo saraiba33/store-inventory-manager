@@ -1,10 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Quicksand&display=swap');
 body {
     font-family: 'Quicksand', sans-serif;
-    /* background-image: url(Rose.jpg);
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    background-size: cover; */
+    margin-bottom: 100px;
 }
 
 table,
@@ -18,7 +15,8 @@ th {
 table {
     margin: 25px;
     background-color: hsla(0, 3%, 73%, 0.5);
-    width: 75%
+    width: 80%;
+    margin-left: 100px;
 }
 
 th {
@@ -29,8 +27,12 @@ th {
 form,
 label,
 input {
-    display: block;
     margin: 10px;
+}
+
+form {
+    display: flex;
+    justify-content: center;
 }
 
 header {
@@ -57,4 +59,8 @@ button {
 
 .clear-button {
     margin-left: 20px;
+}
+
+#days-in-system {
+    display: none;
 }

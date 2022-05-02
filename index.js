@@ -1,86 +1,132 @@
+const table = document.querySelector("tbody")
 const form = document.querySelector("form")
-const table = document.querySelector("table")
-const clear = document.querySelector(".clear-button")
-const nextDayButton = document.querySelector(".next-day")
-const previousDayButton = document.querySelector(".previous-day")
-const placeholder = document.querySelector(".placeholder")
+const nextButton = document.querySelector("#next")
+const previousButton = document.querySelector("#previous")
 const error = document.querySelector(".error")
+const placeholder = document.querySelector(".placeholder")
+
+let newItemAdded = {};
+let allItems = [];
+
+form.addEventListener("submit", (event) => {
+    event.preventDefault()
+    const formData = new FormData(event.target)
+    newItemAdded = {
+        name: formData.get("item-name"),
+        sellIn: +formData.get("sell-in"),
+        quality: +formData.get("item-quality"),
+        category: addCategory(formData.get("item-name"))
+    }
+    allItems.push(newItemAdded);
+
+    const displayItem = document.createElement("tr");
+    displayItem.classList.add("new-row");
+    if (newItemAdded.category.includes("sulfuras")) {
+        displayItem.innerHTML = `
+        <td class="item-name">${newItemAdded.name}</td>
+	    <td class="item-sell-in">0</td>
+        <td>80</td>
+	    `
+        table.append(displayItem);
+        form.reset()
+        placeholder.remove()
+        return errorMessage("")
+    } else if (newItemAdded.name.includes("/")) {
+        return errorMessage("** Enter a single item at a time **")
+    } else if (newItemAdded.quality > 50 &&
+        newItemAdded.sellIn < 0 ||
+        newItemAdded.quality > 50 ||
+        newItemAdded.sellIn < 0) {
+        return errorMessage("** Quality max 50 and Sell in minimum 0 **")
+    } else {
+        displayItem.innerHTML = `
+        <td class="item-name">${newItemAdded.name}</td>
+	    <td class="sell-in">${newItemAdded.sellIn}</td>
+    	<td>${newItemAdded.quality}</td>
+    	`
+        table.append(displayItem);
+        form.reset()
+        placeholder.remove()
+        return errorMessage("")
+    }
+})
 
 
-function getInput() {
-    form.addEventListener("submit", event => {
-        event.preventDefault()
-        location.reload();
-        const formData = new FormData(event.target)
-        const item = formData.get("item-name")
-        const sellIn = +formData.get("sell-in")
-        const quality = +formData.get("quality")
-        const category = getCategory(formData.get("item-name"))
-        const newItemInfoAdded = {
-            item,
-            sellIn,
-            quality,
-            category,
-        }
-        const encodedItem = localStorage.getItem("itemAdded");
-        const itemAdded = encodedItem ? JSON.parse(encodedItem).itemAdded : []
-        itemAdded.push(newItemInfoAdded)
-        const itemJSON = JSON.stringify({ itemAdded })
-        localStorage.setItem("itemAdded", itemJSON)
-    })
-
-}
-getInput()
-
-const encodedItem = localStorage.getItem("itemAdded");
-if (encodedItem) {
-    const parsedItem = JSON.parse(encodedItem)
-    const { itemAdded } = parsedItem
-    itemAdded.map((input) => {
-        const createTr = document.createElement("tr")
-        createTr.classList.add("added-rows")
-        if (input.item.includes("Sulfuras") || input.item.includes("sulfuras")) {
-            createTr.innerHTML = `
-            <td>${input.item}</td>
-            <td class="sell-in-days">N/A</td>
-            <td class="item-quality">80</td>
-            `
-            table.append(createTr)
-            placeholder.remove()
-            return errorMessage("")
-        } else if (input.item.includes("/")) {
-            return errorMessage("** You can not add more than one item at a time **")
-        } else if (input.quality > 50 && input.sellIn < 0 || input.quality > 50 || input.sellIn < 0) {
-            return errorMessage("** Quality max is 50 and Sell in minimum is 0 **")
-        } else {
-            createTr.innerHTML = `
-            <td>${input.item}</td>
-            <td class="sell-in-days">Sell in ${input.sellIn} days</td>
-            <td class="item-quality">${input.quality}</td>
-            `
-            table.append(createTr)
-            placeholder.remove()
-            return errorMessage("")
-        }
-    })
-}
-
-function getCategory(itemName) {
-    if (itemName.includes("Aged Brie") || itemName.includes("aged brie")) {
+function addCategory(item) {
+    if (item.includes("Aged Brie") ||
+        item.includes("Aged brie") ||
+        item.includes("aged Brie")) {
         return "aged"
-    } else if (itemName.includes("Sulfuras") || itemName.includes("sulfuras")) {
-        return "sulfuras"
-    } else if (itemName.includes("Conjured") || itemName.includes("conjured")) {
-        return "conjured"
-    } else if (itemName.includes("Backstage Passes") || itemName.includes("backstage passes")) {
+    } else if (item.includes("Backstage") ||
+        item.includes("backstage")) {
         return "backstage"
-    } else
+    } else if (item.includes("Sulfuras") ||
+        item.includes("sulfuras")) {
+        return "sulfuras"
+    } else if (item.includes("Conjured") ||
+        item.includes("conjured")) {
+        return "conjured"
+    } else {
         return "none"
+    }
 }
 
-clear.addEventListener("click", () => {
-    localStorage.clear()
-    location.reload();
+function changeQuality() {
+    allItems.forEach(item => {
+        if (item.sellIn <= 0 &&
+            item.category === "none") {
+            item.quality = item.quality - 2
+        } else if (item.sellIn <= 5 &&
+            item.category === "backstage") {
+            item.quality = item.quality + 3
+        } else if (item.sellIn <= 10 &&
+            item.category === "backstage") {
+            item.quality = item.quality + 2
+        } else if (item.category === "sulfuras") {
+            item.quality = 80
+        } else {
+            item.quality--
+        }
+    })
+}
+
+function changeSellIn() {
+    allItems.forEach(item => {
+        const addNewItem = document.querySelector(".new-row");
+        addNewItem.innerHTML = `
+        <td class="item-name">${item.name}</td>
+        <td class="item-sell-in">${(item.sellIn - 1)}</td>
+        <td>${item.quality}</td>
+        `
+        item.sellIn--;
+        table.append(addNewItem)
+    })
+}
+
+function quality() {
+    allItems.forEach(item => {
+        switch (item.category) {
+            case "aged":
+                item.quality = item.quality + 1
+                break;
+            case "backstage":
+                item.quality = item.quality + 1
+                break;
+            case "sulfuras":
+                item.quality = item.quality
+                break;
+            case "conjured":
+                item.quality = item.quality - 2
+                break;
+
+        }
+    })
+}
+
+nextButton.addEventListener("click", () => {
+    quality();
+    changeSellIn();
+    changeQuality();
 })
 
 function errorMessage(message) {
