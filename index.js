@@ -93,13 +93,22 @@ function changeQuality() {
 function changeSellIn() {
     allItems.forEach(item => {
         const addNewItem = document.querySelector(".new-row");
-        addNewItem.innerHTML = `
+        if (item.sellIn === 0) {
+            addNewItem.innerHTML = `
+        <td class="item-name">${item.name}</td>
+        <td class="item-sell-in">${(item.sellIn = 0)}</td>
+        <td>${item.quality}</td>
+        `
+            table.append(addNewItem)
+        } else {
+            addNewItem.innerHTML = `
         <td class="item-name">${item.name}</td>
         <td class="item-sell-in">${(item.sellIn - 1)}</td>
         <td>${item.quality}</td>
         `
-        item.sellIn--;
-        table.append(addNewItem)
+            item.sellIn--;
+            table.append(addNewItem)
+        }
     })
 }
 
