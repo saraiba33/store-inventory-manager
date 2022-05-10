@@ -33,11 +33,9 @@ form.addEventListener("submit", (event) => {
         return errorMessage("")
     } else if (newItemAdded.name.includes("/")) {
         return errorMessage("** Enter a single item at a time **")
-    } else if (newItemAdded.quality > 50 &&
-        newItemAdded.sellIn < 0 ||
-        newItemAdded.quality > 50 ||
-        newItemAdded.sellIn < 0) {
-        return errorMessage("** Quality max 50 and Sell in minimum 0 **")
+    } else if (newItemAdded.quality > 50 ||
+        newItemAdded.quality < 0) {
+        return errorMessage("** Quality max 50 & minimum 0 **")
     } else {
         displayItem.innerHTML = `
         <td class="item-name">${newItemAdded.name}</td>
@@ -55,7 +53,7 @@ form.addEventListener("submit", (event) => {
 function addCategory(item) {
     if (item.includes("Aged Brie") ||
         item.includes("Aged brie") ||
-        item.includes("aged Brie")) {
+        item.includes("aged brie")) {
         return "aged"
     } else if (item.includes("Backstage") ||
         item.includes("backstage")) {
@@ -73,7 +71,11 @@ function addCategory(item) {
 
 function changeQuality() {
     allItems.forEach(item => {
-        if (item.sellIn <= 0 &&
+        if (item.quality > 50) {
+            return item.quality = 50
+        } else if (item.quality <= 0) {
+            return item.quality = 0
+        } else if (item.sellIn <= 0 &&
             item.category === "none") {
             item.quality = item.quality - 2
         } else if (item.sellIn <= 5 &&
@@ -84,6 +86,8 @@ function changeQuality() {
             item.quality = item.quality + 2
         } else if (item.category === "sulfuras") {
             item.quality = 80
+        } else if (item.category === "aged") {
+            item.quality = item.quality + 1
         } else {
             item.quality--
         }
@@ -93,22 +97,13 @@ function changeQuality() {
 function changeSellIn() {
     allItems.forEach(item => {
         const addNewItem = document.querySelector(".new-row");
-        if (item.sellIn === 0) {
-            addNewItem.innerHTML = `
-        <td class="item-name">${item.name}</td>
-        <td class="item-sell-in">${(item.sellIn = 0)}</td>
-        <td>${item.quality}</td>
-        `
-            table.append(addNewItem)
-        } else {
-            addNewItem.innerHTML = `
+        addNewItem.innerHTML = `
         <td class="item-name">${item.name}</td>
         <td class="item-sell-in">${(item.sellIn - 1)}</td>
         <td>${item.quality}</td>
         `
-            item.sellIn--;
-            table.append(addNewItem)
-        }
+        item.sellIn--;
+        table.append(addNewItem)
     })
 }
 
@@ -127,7 +122,6 @@ function quality() {
             case "conjured":
                 item.quality = item.quality - 2
                 break;
-
         }
     })
 }
